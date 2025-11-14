@@ -2362,7 +2362,7 @@ function toggleProgramLock(isLocked) {
                     const projectedLIC = Math.max(componentA, componentB);
                     
                     let benefits = [
-                        { name: "Initial Coverage (Non-Accidental)", value: `₱${formatNumberInt(prem.annual)} + Fund Value` },
+                        { name: "Initial Coverage (Non-Accidental)", value: `Fund Value + Charges` },
                         { name: "Initial Coverage (Accidental)", value: `₱${formatNumberInt(prem.annual * 5)}` },
                         { name: `Projected Life Insurance at Age ${projectionAge}`, value: `₱${formatNumberInt(projectedLIC)}` }
                     ];
@@ -2406,7 +2406,7 @@ function toggleProgramLock(isLocked) {
                     const projectedLIC = Math.max(componentA, componentB);
 
                     let benefits = [
-                         { name: "Initial Coverage (Non-Accidental)", value: `₱${formatNumberInt(prem.annual)} + Fund Value` },
+                         { name: "Initial Coverage (Non-Accidental)", value: `Fund Value + Charges` },
                         { name: "Initial Coverage (Accidental)", value: `₱${formatNumberInt(prem.annual * 5)}` },
                         { name: `Projected Life Insurance at Age ${projectionAge}`, value: `₱${formatNumberInt(projectedLIC)}` }
                     ];
