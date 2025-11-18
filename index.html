@@ -1,931 +1,526 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Quick Proposal Tool</title>
-
     
-
+    <!-- 1. Try to load Tailwind (Will work automatically when Cloudflare/Internet is back) -->
     <script src="https://cdn.tailwindcss.com"></script>
-
     
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
     
-
+    <!-- 2. SAFETY PATCH: IMPROVED OFFLINE STYLES -->
+    <!-- These styles mimic the original design so it looks good even without Cloudflare -->
     <style>
-
-        /* 1. Fix the Giant Icons */
-
-        svg { width: 24px; height: 24px; }
-
-        svg.w-8 { width: 32px; height: 32px; }
-
-        
-
-        /* 2. Basic Reset & Layout */
-
+        /* Reset & Base */
         body { 
-
             font-family: 'Inter', sans-serif; 
-
             margin: 0; 
-
             background-color: #f3f4f6; 
-
             display: flex; 
-
             flex-direction: column; 
-
             height: 100vh; 
-
+            color: #374151;
         }
-
         
-
-        /* 3. Header Styling */
-
+        /* Icons Fix */
+        svg { width: 20px; height: 20px; display: inline-block; vertical-align: middle; }
+        .w-6 { width: 24px; height: 24px; }
+        .w-8 { width: 32px; height: 32px; }
+        
+        /* Header */
         header { 
-
             background: white; 
-
-            padding: 1rem; 
-
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-
+            padding: 1rem 1.5rem; 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
             display: flex; 
-
             justify-content: space-between;
-
             align-items: center;
-
+            z-index: 30;
         }
-
-        header h1 { font-size: 1.25rem; font-weight: bold; color: #004c6c; margin: 0; }
-
-        header .flex { display: flex; align-items: center; gap: 10px; }
-
-
-
-        /* 4. Main Layout (Sidebar + Content) */
-
+        header h1 { font-size: 1.25rem; font-weight: 700; color: #004c6c; margin: 0; }
+        
+        /* Layout */
         .flex-grow { flex-grow: 1; display: flex; overflow: hidden; position: relative; }
-
         
-
+        /* Sidebar */
         aside { 
-
-            width: 320px; 
-
+            width: 350px; 
             background: white; 
-
-            padding: 1rem; 
-
+            padding: 1.5rem; 
             overflow-y: auto; 
-
             border-right: 1px solid #e5e7eb;
-
+            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+            z-index: 20;
         }
-
         
-
-        main { 
-
-            flex-grow: 1; 
-
-            padding: 2rem; 
-
-            overflow-y: auto; 
-
+        /* Details/Summary (Accordion) Styling */
+        details {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        summary { 
+            cursor: pointer; 
+            list-style: none; 
+            outline: none; 
+            font-weight: 600; 
+            color: #004c6c;
             display: flex; 
-
-            justify-content: center; 
-
-            background-color: #e9ecef;
-
+            justify-content: space-between; 
+            align-items: center;
         }
-
-
-
-        /* 5. Proposal Paper Styling */
-
-        .proposal-container {
-
-            background: white;
-
-            width: 8.5in;
-
-            min-height: 11in;
-
-            padding: 3rem;
-
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-
-            margin: 0 auto;
-
-            color: #333;
-
-        }
-
-
-
-        /* 6. Form Elements */
-
-        input, select { 
-
-            width: 100%; 
-
-            padding: 0.5rem; 
-
-            margin-bottom: 0.5rem; 
-
-            border: 1px solid #d1d5db; 
-
-            border-radius: 0.375rem; 
-
-            font-size: 0.875rem;
-
-            box-sizing: border-box; 
-
-        }
-
-        
-
-        /* 7. Buttons */
-
-        button#updateProposalBtn { background-color: #004c6c; color: white; width: 100%; padding: 8px; border-radius: 6px; border: none; cursor: pointer; }
-
-        button#generateImageBtn { background-color: #00b4bd; color: white; width: 100%; padding: 8px; border-radius: 6px; border: none; cursor: pointer; }
-
-        
-
-        /* 8. Utilities fallback */
-
-        .hidden { display: none !important; }
-
-        .text-\[\#004c6c\] { color: #004c6c; }
-
-        .text-\[\#eaab00\] { color: #eaab00; }
-
-        .font-bold { font-weight: 700; }
-
-        .text-center { text-align: center; }
-
-        .grid { display: grid; gap: 1rem; }
-
-        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-
-        
-
-        /* Mobile Responsive Fallback */
-
-        @media (max-width: 1024px) {
-
-            body { height: auto; }
-
-            .flex-grow { flex-direction: column; }
-
-            aside { width: 100%; border-right: none; border-bottom: 1px solid #ddd; }
-
-            main { padding: 1rem; }
-
-            .proposal-container { width: 100%; transform: none !important; }
-
-            #zoom-controls { display: none; }
-
-        }
-
-    </style>
-
-    
-
-    <style>
-
-        /* Original specific styles kept for drag functionality */
-
-        html, body { height: 100%; }
-
-        .proposal-container {
-
-            transform-origin: top left;
-
-            background-image:
-
-                radial-gradient(circle at top right, rgba(0, 76, 108, 0.03), transparent 40%),
-
-                radial-gradient(circle at bottom left, rgba(234, 171, 0, 0.03), transparent 50%);
-
-            cursor: grab;
-
-        }
-
-        .proposal-container.grabbing { cursor: grabbing; user-select: none; z-index: 10; }
-
-        summary { cursor: pointer; list-style: none; outline: none; }
-
         summary::-webkit-details-marker { display: none; }
+        
+        /* Main Content */
+        main { 
+            flex-grow: 1; 
+            padding: 2rem; 
+            overflow-y: auto; 
+            display: flex; 
+            justify-content: center; 
+            background-color: #e9ecef;
+        }
 
+        /* Proposal Paper */
+        .proposal-container {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            padding: 3rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            margin: 0 auto;
+            color: #1f2937;
+            transform-origin: top left;
+            /* Gradient Background from original */
+            background-image:
+                radial-gradient(circle at top right, rgba(0, 76, 108, 0.03), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(234, 171, 0, 0.03), transparent 50%);
+        }
+
+        /* Proposal Typography */
+        .proposal-container h1 { font-size: 2.5rem; line-height: 1; color: #eaab00; margin-bottom: 0.5rem; }
+        .proposal-container h2 { font-size: 1.25rem; color: #004c6c; font-weight: 700; margin: 0; }
+        .proposal-container h3 { 
+            font-size: 1rem; 
+            font-weight: 700; 
+            color: #004c6c; 
+            border-bottom: 2px solid #eaab00; 
+            padding-bottom: 0.25rem; 
+            margin-bottom: 0.5rem; 
+            margin-top: 1.5rem;
+        }
+
+        /* Form Elements */
+        input, select { 
+            width: 100%; 
+            padding: 0.5rem 0.75rem; 
+            margin-bottom: 0.5rem; 
+            border: 1px solid #d1d5db; 
+            border-radius: 0.375rem; 
+            font-size: 0.875rem;
+            box-sizing: border-box; 
+            background-color: #fff;
+        }
+        input:focus, select:focus { border-color: #004c6c; outline: 2px solid #004c6c33; }
+        
+        /* Buttons */
+        button#updateProposalBtn { background-color: #004c6c; color: white; width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        button#generateImageBtn { background-color: #00b4bd; color: white; width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+
+        /* Utilities & Helpers */
+        .hidden { display: none !important; }
+        .text-sm { font-size: 0.875rem; }
+        .text-xs { font-size: 0.75rem; }
+        .font-bold { font-weight: 700; }
+        .text-center { text-align: center; }
+        .grid { display: grid; gap: 1rem; }
+        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .border-b { border-bottom: 1px solid #e5e7eb; }
+        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .space-x-3 > * + * { margin-left: 0.75rem; }
+        
+        /* Comparison Grid Override */
+        .grid-cols-10 { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); }
+        .col-span-4 { grid-column: span 4 / span 4; }
+        .col-span-2 { grid-column: span 2 / span 2; }
+        .gap-x-2 { column-gap: 0.5rem; }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            body { height: auto; overflow-y: auto; }
+            .flex-grow { flex-direction: column; overflow: visible; }
+            aside { width: 100%; border-right: none; border-bottom: 1px solid #e5e7eb; }
+            main { padding: 1rem; display: block; }
+            .proposal-container { width: 100% !important; transform: none !important; padding: 1.5rem; }
+            #zoom-controls { display: none; }
+        }
     </style>
-
 </head>
-
 <body class="bg-gray-100 h-screen flex flex-col">
 
-
-
+    <!-- Header -->
     <header class="bg-white shadow-md p-4 z-30 flex-shrink-0">
-
         <div class="max-w-7xl mx-auto flex justify-between items-center w-full">
-
             <div class="flex items-center space-x-3">
-
-                 <button id="menu-toggle" class="text-gray-600 hover:text-[#004c6c] lg:hidden">
-
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-
+                 <!-- Universal Menu Toggle -->
+                <button id="menu-toggle" class="text-gray-600 hover:text-[#004c6c] lg:hidden">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
-
                 <div class="flex items-center space-x-3">
-
-                    <svg class="w-8 h-8 text-[#eaab00]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
-
+                    <svg class="w-8 h-8 text-[#eaab00]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
                     <h1 class="text-xl font-bold text-[#004c6c]">Quick Proposal Tool</h1>
-
                 </div>
-
             </div>
-
         </div>
-
     </header>
 
-
-
     <div class="flex-grow flex relative overflow-hidden">
-
+        <!-- Sidebar Overlay (for mobile) -->
         <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
-
         
-
+        <!-- Controls Panel (Sidebar) -->
         <aside id="controls-sidebar" class="w-80 lg:w-96 bg-white p-4 shadow-lg flex-shrink-0 z-40 h-full overflow-y-auto absolute lg:relative transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-
             <div id="sidebar-content" class="space-y-4">
-
                  <details class="bg-slate-50 p-3 rounded-lg border border-slate-200" open>
-
                     <summary class="text-base font-semibold text-[#004c6c] flex justify-between items-center">
-
                         <span>Advisor & Client Details</span>
-
-                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-
+                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </summary>
-
                     <div class="mt-4 space-y-3">
-
                         <div>
-
                             <h3 class="font-semibold text-gray-700 mb-1 text-sm">Advisor</h3>
-
                             <div class="space-y-2">
-
                                 <input type="text" id="advisorCode" placeholder="Type advisor code..." class="w-full p-1.5 text-sm border border-gray-300 rounded-md bg-white">
-
                                 <input type="text" id="advisorName" placeholder="Name" class="w-full p-1.5 text-sm border border-gray-300 rounded-md bg-gray-100" readonly>
-
                                 <input type="text" id="advisorMobile" placeholder="Mobile" class="w-full p-1.5 text-sm border border-gray-300 rounded-md bg-gray-100" readonly>
-
                                 <input type="email" id="advisorEmail" placeholder="Email" class="w-full p-1.5 text-sm border border-gray-300 rounded-md bg-gray-100" readonly>
-
                             </div>
-
                         </div>
-
                         <div id="client-section">
-
                             <h3 class="font-semibold text-gray-700 mb-2 mt-3 text-sm">Client</h3>
-
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-
                                 <input type="text" id="clientName" placeholder="Client Name" class="w-full p-1.5 text-sm border border-gray-300 rounded-md sm:col-span-2" value="Insured's Name">
-
                                 <input type="number" id="clientAge" placeholder="Age" value="25" class="w-full p-1.5 text-sm border border-gray-300 rounded-md">
-
                                 <select id="clientGender" class="w-full p-1.5 text-sm border border-gray-300 rounded-md">
-
                                     <option value="Male">Male</option>
-
                                     <option value="Female" selected>Female</option>
-
                                 </select>
-
                                 <select id="clientSmoker" class="w-full p-1.5 text-sm border border-gray-300 rounded-md sm:col-span-2">
-
                                     <option value="Non-smoker">Non-smoker</option>
-
                                     <option value="Smoker">Smoker</option>
-
                                 </select>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </details>
-
-
 
                 <details id="plan-details-section" class="bg-slate-50 p-3 rounded-lg border border-slate-200" open>
-
                     <summary class="text-base font-semibold text-[#004c6c] flex justify-between items-center">
-
                         <span>Plan Details</span>
-
-                         <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-
+                         <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </summary>
-
                     <div class="mt-4 space-y-3">
-
                         <select id="planSelector" class="w-full p-1.5 text-sm border border-gray-300 rounded-md"></select>
 
-
-
                         <div id="notificationArea" class="hidden bg-red-100 border-l-4 border-red-500 text-red-700 p-2 text-sm" role="alert">
-
                             <p class="font-bold">Notice</p>
-
                             <p id="notificationMessage"></p>
-
                         </div>
 
-
-
                         <div class="p-2 bg-white rounded-md border">
-
                             <div class="flex items-center justify-around space-x-2">
-
                                 <label class="flex items-center cursor-pointer text-sm"><input type="radio" name="viewMode" value="single" class="mr-2 h-4 w-4 text-[#004c6c] focus:ring-[#00b4bd]" checked> Single</label>
-
                                 <label class="flex items-center cursor-pointer text-sm"><input type="radio" name="viewMode" value="compare" class="mr-2 h-4 w-4 text-[#004c6c] focus:ring-[#00b4bd]"> Compare 3</label>
-
                             </div>
-
                         </div>
-
-
 
                         <div class="p-2 bg-white rounded-md border">
-
                             <label class="flex items-center cursor-pointer text-sm font-medium">
-
                                 <input type="checkbox" id="manualModeCheckbox" class="mr-2 h-4 w-4 text-[#004c6c] focus:ring-[#00b4bd]">
-
                                 Manual Override
-
                             </label>
-
                         </div>
-
                         
-
+                        <!-- NEW FEATURE: Custom Projection Age for EasyLink -->
                         <div id="custom-projection-age-container" class="hidden space-y-2 mt-2 p-2 bg-white rounded-md border">
-
                             <label for="customProjectionAge" class="font-medium text-gray-600 block text-xs">Custom Projection Age</label>
-
                             <input type="number" id="customProjectionAge" placeholder="e.g., 65" class="w-full p-1.5 text-sm border border-gray-300 rounded-md">
-
                         </div>
-
-
 
                         <div id="standardInputsContainer">
-
                             <div id="faceAmountContainer" class="hidden">
-
                                 <label class="font-medium text-gray-600 block mb-1 text-xs">Face Amount</label>
-
                                 <select id="faceAmountSelector" class="w-full p-1.5 text-sm border border-gray-300 rounded-md"></select>
-
                             </div>
-
                             <div id="annualPremiumContainer" class="hidden">
-
                                 <label class="font-medium text-gray-600 block mb-1 text-xs">Annual Premium</label>
-
                                 <input type="text" id="annualPremiumInput" placeholder="Enter Annual Premium" class="w-full p-1.5 text-sm border border-gray-300 rounded-md" value="30,000">
-
                             </div>
-
                              <div id="compareFaceAmountContainer" class="space-y-2 hidden"></div>
-
                              <div id="comparePremiumContainer" class="hidden space-y-2">
-
                                 <div>
-
                                     <label class="font-medium text-gray-600 block mb-1 text-xs">Option 1</label>
-
                                     <input type="text" id="annualPremiumInputC1" placeholder="Premium 1" class="w-full p-1.5 text-sm border border-gray-300 rounded-md" value="50,000">
-
                                 </div>
-
                                 <div>
-
                                     <label class="font-medium text-gray-600 block mb-1 text-xs">Option 2</label>
-
                                     <input type="text" id="annualPremiumInputC2" placeholder="Premium 2" class="w-full p-1.5 text-sm border border-gray-300 rounded-md" value="40,000">
-
                                 </div>
-
                                 <div>
-
                                     <label class="font-medium text-gray-600 block mb-1 text-xs">Option 3</label>
-
                                     <input type="text" id="annualPremiumInputC3" placeholder="Premium 3" class="w-full p-1.5 text-sm border border-gray-300 rounded-md" value="30,000">
-
                                 </div>
-
                             </div>
-
                              <div id="projectionYearsContainer" class="hidden space-y-2 mt-2 p-2 bg-gray-50 rounded-md border">
-
                                 <h4 class="font-medium text-gray-600 block text-xs">Projection Years</h4>
-
                                 <div class="grid grid-cols-3 gap-2">
-
                                     <input type="number" id="projectionYear1" class="w-full p-1.5 text-sm border border-gray-300 rounded-md" value="15">
-
                                     <input type="number" id="projectionYear2" class="w-full p-1.5 text-sm border border-gray-300 rounded-md" value="20">
-
                                     <input type="number" id="projectionYear3" class="w-full p-1.5 text-sm border border-gray-300 rounded-md" value="30">
-
                                 </div>
-
                             </div>
-
                         </div>
-
-
 
                         <div id="manualInputsContainer" class="hidden space-y-3"></div>
-
                     </div>
-
                 </details>
-
-
 
                  <details id="actions-section" class="bg-slate-50 p-3 rounded-lg border border-slate-200" open>
-
                     <summary class="text-base font-semibold text-[#004c6c] flex justify-between items-center">
-
                         <span>Actions</span>
-
-                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-
+                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </summary>
-
                     <div class="mt-4 space-y-3">
-
                         <div class="grid grid-cols-2 gap-3">
-
                             <button id="updateProposalBtn" class="w-full bg-[#004c6c] text-white font-bold py-2 px-3 text-sm rounded-lg hover:bg-opacity-90 transition duration-300">Update</button>
-
                             <button id="generateImageBtn" class="w-full bg-[#00b4bd] text-white font-bold py-2 px-3 text-sm rounded-lg hover:bg-opacity-90 transition duration-300">Generate PNG</button>
-
                         </div>
-
                     </div>
-
                 </details>
-
             </div>
-
             <div id="toast" class="fixed top-5 right-5 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50 transition-transform duration-300 ease-in-out">
-
                 Image downloaded!
-
             </div>
-
         </aside>
 
-
-
+        <!-- Proposal Preview (Main Content) -->
         <main id="main-content" class="flex-grow relative h-full">
-
             <div class="proposal-wrapper h-full">
-
-                <div id="proposal" class="proposal-container p-8 md:p-12 text-gray-800 relative leading-normal">
-
-                     <header class="flex flex-col sm:flex-row justify-between items-start mb-8 pb-4 border-b-4 border-[#004c6c]">
-
+                <div id="proposal" class="proposal-container text-gray-800 relative leading-normal">
+                     <header class="flex flex-col sm:flex-row justify-between items-start mb-8 pb-4 border-b-4 border-[#004c6c] bg-transparent shadow-none p-0">
                         <div class="mb-4 sm:mb-0">
-
-                            <h1 class="text-4xl lg:text-5xl font-bold text-[#eaab00]">Sample Proposal</h1>
-
+                            <h1 class="text-4xl lg:text-5xl font-bold text-[#eaab00] mb-2" style="font-size: 2.5rem;">Sample Proposal</h1>
                             <p class="text-md text-gray-600 mt-1">Let's create your BRIGHT PLAN today!</p>
-
                         </div>
-
                         <div class="text-left sm:text-right text-xs text-gray-700 leading-snug w-full sm:w-auto">
-
                             <p><strong>Advisor:</strong> <span id="propAdvisorName"></span></p>
-
                             <p><strong>Mobile:</strong> <span id="propAdvisorMobile"></span></p>
-
                             <p><strong>Email:</strong> <span id="propAdvisorEmail"></span></p>
-
                         </div>
-
                     </header>
 
-
-
                     <div class="space-y-6">
-
                         <section class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-
                              <div class="lg:col-span-2">
-
                                 <h3 class="font-bold border-b-2 border-[#eaab00] pb-1 mb-2 text-[#004c6c]">INSURED DETAILS</h3>
-
                                 <div class="lg:col-span-2">
-
                                     <div class="text-sm space-y-1">
-
                                         <p><strong>Name:</strong> <span id="propInsuredName"></span></p>
-
                                         <p><strong>Age:</strong> <span id="propInsuredAge"></span></p>
-
                                         <p><strong>Gender:</strong> <span id="propInsuredGender"></span></p>
-
                                         <p><strong>Smoking Habit:</strong> <span id="propInsuredSmoker"></span></p>
-
                                     </div>
-
                                 </div>
-
                             </div>
-
                             <div class="lg:col-span-3">
-
                                 <h3 class="font-bold border-b-2 border-[#eaab00] pb-1 mb-2 text-[#004c6c]">PRODUCT DETAILS</h3>
-
                                 <div class="space-y-1">
-
                                     <h2 id="propPlanName" class="text-xl font-bold text-[#004c6c]"></h2>
-
                                     <p id="propPlanPayment" class="text-sm font-semibold text-gray-600"></p>
-
                                     <p id="propPlanDescription" class="text-sm"></p>
-
                                 </div>
-
                             </div>
-
                         </section>
-
                         <p id="propPlanPurpose" class="font-semibold text-sm"></p>
 
-
-
                         <p class="text-xs text-center italic text-gray-500 p-2 bg-gray-50 rounded-md">
-
                             Disclaimer: This is a sample proposal for illustration purposes only. Premiums and benefits are subject to change based on underwriting. Please schedule a meeting to receive the official and final proposal.
-
                         </p>
 
-
-
                         <section id="benefitsSummary"></section>
-
                         <section id="premiumsSummary" class="bg-gradient-to-r from-blue-50 to-yellow-50 p-4 lg:p-6 rounded-lg border border-gray-200"></section>
-
                         <section id="remarksContainer" class="text-sm"></section>
 
-
-
                         <footer class="pt-4 border-t-2 border-gray-200">
-
                             <h3 class="text-lg font-bold text-[#004c6c] mb-2">OPTIONAL SUPPLEMENTAL BENEFITS</h3>
-
                             <p class="text-xs mb-4 text-gray-500">The following riders can be added to enhance your plan. Ask your advisor for more details.</p>
-
                             <div id="ridersContainer" class="text-xs space-y-1"></div>
-
                         </footer>
-
                         
-
                          <footer id="watermark" class="text-center text-xs text-gray-400 font-light pt-8">
-
                             <p>Disclaimer: This is just a sample proposal and does not reflect the complete benefits, inclusions, terms and conditions of the product.</p>
-
                         </footer>
-
                     </div>
-
                 </div>
-
             </div>
-
+            <!-- Floating Zoom Controls -->
             <div id="zoom-controls" class="absolute bottom-8 left-8 bg-white/80 backdrop-blur-sm p-2 rounded-full shadow-lg z-10 flex items-center space-x-2">
-
                  <label class="font-medium text-gray-600 text-sm pl-2">Zoom:</label>
-
                  <button id="zoomOutBtn" class="bg-gray-200 text-gray-700 font-bold p-1 rounded-full w-7 h-7 flex items-center justify-center hover:bg-gray-300 transition">-</button>
-
                  <span id="zoomLevel" class="text-gray-700 font-semibold w-12 text-center text-sm">100%</span>
-
                  <button id="zoomInBtn" class="bg-gray-200 text-gray-700 font-bold p-1 rounded-full w-7 h-7 flex items-center justify-center hover:bg-gray-300 transition">+</button>
-
             </div>
-
         </main>
-
     </div>
 
-
-
+    <!-- Floating Calculator Button -->
     <button id="calculator-btn" class="fixed bottom-8 right-8 bg-[#eaab00] text-white p-4 rounded-full shadow-lg z-50 hover:bg-yellow-600 transition-transform hover:scale-110">
-
         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-
             <path stroke-linecap="round" stroke-linejoin="round" d="M9 7h6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2z" />
-
         </svg>
-
     </button>
 
-
-
+    <!-- Calculator Modal -->
     <div id="calculator-modal" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gray-800 border-2 border-yellow-500 rounded-lg shadow-2xl z-[100] w-80 text-white">
-
         <div id="calculator-header" class="bg-gray-900 p-2 rounded-t-lg cursor-grab flex justify-between items-center">
-
             <h3 class="text-sm font-semibold text-gray-300">Notes Calculator</h3>
-
             <button id="calculator-close-btn" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
-
         </div>
-
         <div class="p-4">
-
             <div class="bg-gray-900 rounded-md p-2">
-
                 <textarea id="notes-calc-input" class="w-full h-48 bg-transparent text-white font-mono text-lg resize-none focus:outline-none" placeholder="Type calculations... e.g., 100000 / 12"></textarea>
-
                 <div id="notes-calc-output" class="text-right text-yellow-400 font-mono text-2xl font-bold pt-2 border-t border-gray-700"></div>
-
             </div>
-
         </div>
-
     </div>
-
-
-
 
 
 <script type="module">
-
 /*
-
 =================================================================================================
-
     APPLICATION LOGIC START
-
 =================================================================================================
-
 */
-
 function updateAdvisorFields() {
-
     const enteredCode = dom.advisorCode.value.trim();
-
     const selectedAdvisor = advisors.find(advisor => advisor.code === enteredCode);
 
-
-
     if (selectedAdvisor) {
-
         dom.advisorName.value = selectedAdvisor.name;
-
         dom.advisorMobile.value = selectedAdvisor.mobile;
-
         dom.advisorEmail.value = selectedAdvisor.email;
-
         toggleProgramLock(false); // Unlock program
-
     } else {
-
         dom.advisorName.value = '';
-
         dom.advisorMobile.value = '';
-
         dom.advisorEmail.value = '';
-
         toggleProgramLock(true); // Lock program
-
     }
-
     updateProposal();
-
 }
 
-
-
 function toggleProgramLock(isLocked) {
-
     const clientSection = document.getElementById('client-section');
-
     const planDetails = document.getElementById('plan-details-section');
-
     const actions = document.getElementById('actions-section');
-
     const calculatorBtn = dom.calculator.btn;
-
-
 
     const elementsToToggle = [clientSection, planDetails, actions, calculatorBtn];
 
-
-
     if (isLocked) {
-
         elementsToToggle.forEach(el => {
-
             if(el) el.classList.add('opacity-50', 'pointer-events-none');
-
         });
-
         dom.advisorCode.classList.remove('border-green-500', 'focus:border-green-500', 'focus:ring-green-500');
-
         dom.advisorCode.classList.add('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
 
-
-
     } else {
-
         elementsToToggle.forEach(el => {
-
             if(el) el.classList.remove('opacity-50', 'pointer-events-none');
-
         });
-
         dom.advisorCode.classList.add('border-green-500', 'focus:border-green-500', 'focus:ring-green-500');
-
         dom.advisorCode.classList.remove('border-red-500', 'focus:border-red-500', 'focus:ring-red-500');
-
     }
-
 }
 
-
-
 /*
-
 =================================================================================================
-
     EDITABLE PRODUCT DATABASE & RIDER DEFINITIONS
-
 =================================================================================================
-
 */
-
-
 
         const VUL_RETURN_RATE = 0.08;
 
-
-
         const riderDefinitions = {
-
             "TDB": { name: "Total Disability Benefit (TDB)", description: "Waiver of Premium upon Permanent Disability" },
-
             "ADB": { name: "Accidental Death Benefit (ADB)", description: "Additional cash benefit if death is due to accident" },
-
             "ADDD": { name: "Accidental Death, Dismemberment and Disability Benefit (ADDD)", description: "Additional cash benefit if death is due to accident or if with permanent disability" },
-
             "CIB": { name: "Critical Illness Benefit (CIB)", description: "Cash benefit if diagnosed with any of the 36 covered critical illness" },
-
             "HIB": { name: "Hospital Income Benefit (HIB)", description: "Daily hospitalization Benefit upon confinement due to sickness or injury" },
-
             "WPDD": { name: "Waiver of Premium Upon Death or Disability of Initial Owner (WPDD)", description: "Waiver of Premium upon death/disability of initial owner (for 15YO and below)" },
-
             "WPD": { name: "Waiver of Premium Upon Death of Initial Owner (WPD)", description: "Waiver of Premium upon death of initial owner (for 15YO and below)" }
-
         };
-
-
 
         const getEasyLinkDeathBenefitComponentA = (annualPremium, payPeriod, policyYear) => {
-
             const maxFaceAmount = 1.25 * payPeriod * annualPremium;
-
             if (policyYear >= payPeriod) {
-
                 return maxFaceAmount;
-
             }
-
             if (policyYear <= 4) {
-
                  return 5 * annualPremium;
-
             }
-
             // From year 5 up to the end of the paying period
-
             return 1.25 * policyYear * annualPremium;
-
         };
-
-
 
         const generateHealthCoreBenefits = (fa) => {
-
             const minorCIMax = Math.min(fa * 0.20, 1000000);
-
             const dailyHIB = fa * 0.00125;
-
             return [
-
                 { name: "Life Insurance Coverage", value: `₱${formatNumberInt(fa)}` },
-
                 { name: "Major Critical Illness Benefit", value: `up to ₱${formatNumberInt(fa)}` },
-
                 { name: "Covers 100+ Critical Illnesses", value: `from minor to major stages`},
-
                 { name: "Minor CI Benefit (up to 3x)", value: `₱${formatNumberInt(minorCIMax)}`},
-
                 { name: "Specific Cancer Booster", value: `+ ₱${formatNumberInt(fa * 0.5)}` },
-
                 { name: `Daily Hospital Income`, value: `₱${formatNumberInt(dailyHIB)}` },
-
                 { name: "Post-Hospitalization Benefit", value: `up to ₱5,000` },
-
                 { name: "Palliative Care Benefit", value: `10% of Face Amount` },
-
             ];
-
         };
-
-
 
         const generateHealthLivingBenefits = (fa, age) => {
-
             const cashPayoutAmount = fa * 0.05;
-
             return [
-
                 { name: `Guaranteed Cash Payouts`, value: `₱${formatNumberInt(cashPayoutAmount)}/yr for 8 yrs starting age 65/70` },
-
                 { name: "Special Bonus & Lifetime Dividends", value: "Potential Earnings" },
-
                 { name: "Guaranteed Cash Value", value: `Loanable from 2nd year` },
-
             ];
-
         };
 
-
-
         const generateDreamAchieverPayouts = (fa, startAge) => {
-
             const payouts = [];
-
             const percentages = [0.20, 0.23, 0.264, 0.306]; 
 
-
-
             for (let i = 0; i < percentages.length; i++) {
-
                 const payoutAmount = fa * percentages[i];
-
                 const displayValue = formatNumberInt === formatNumberFull ? formatNumberFull(payoutAmount) : formatNumberShort(payoutAmount);
-
                 payouts.push({ name: `Guaranteed Payout at Age ${startAge + i}`, value: `₱${displayValue}` });
-
             }
-
             return payouts;
-
         }
 
-
-
+        // ------------------------------------------------------------------
+        // PASTE YOUR PRODUCTS DATA BELOW THIS LINE 
+        // ------------------------------------------------------------------
         const products = {
             "Sun Maxilink Prime": {
                 planName: "Sun Maxilink Prime",
@@ -13466,6 +13061,7 @@ function toggleProgramLock(isLocked) {
             if (planName.includes("Sun Life EasyLink Protect 10")) return 200000;
             return Infinity;
         }
+        // ------------------------------------------------------------------
 
         // Calculation for Sun Maxilink Prime (10-pay)
         function calculateVULFundValue(annualPremium, years) {
