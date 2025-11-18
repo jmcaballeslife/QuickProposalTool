@@ -4,164 +4,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quick Proposal Tool</title>
-    
-    <!-- 1. Try to load Tailwind (Will work automatically when Cloudflare/Internet is back) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-    <!-- 2. SAFETY PATCH: IMPROVED OFFLINE STYLES -->
-    <!-- These styles mimic the original design so it looks good even without Cloudflare -->
     <style>
-        /* Reset & Base */
-        body { 
-            font-family: 'Inter', sans-serif; 
-            margin: 0; 
-            background-color: #f3f4f6; 
-            display: flex; 
-            flex-direction: column; 
-            height: 100vh; 
-            color: #374151;
+        html, body {
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
         }
-        
-        /* Icons Fix */
-        svg { width: 20px; height: 20px; display: inline-block; vertical-align: middle; }
-        .w-6 { width: 24px; height: 24px; }
-        .w-8 { width: 32px; height: 32px; }
-        
-        /* Header */
-        header { 
-            background: white; 
-            padding: 1rem 1.5rem; 
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
-            display: flex; 
-            justify-content: space-between;
-            align-items: center;
-            z-index: 30;
-        }
-        header h1 { font-size: 1.25rem; font-weight: 700; color: #004c6c; margin: 0; }
-        
-        /* Layout */
-        .flex-grow { flex-grow: 1; display: flex; overflow: hidden; position: relative; }
-        
-        /* Sidebar */
-        aside { 
-            width: 350px; 
-            background: white; 
-            padding: 1.5rem; 
-            overflow-y: auto; 
-            border-right: 1px solid #e5e7eb;
-            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
-            z-index: 20;
-        }
-        
-        /* Details/Summary (Accordion) Styling */
-        details {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        summary { 
-            cursor: pointer; 
-            list-style: none; 
-            outline: none; 
-            font-weight: 600; 
-            color: #004c6c;
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-        }
-        summary::-webkit-details-marker { display: none; }
-        
-        /* Main Content */
-        main { 
-            flex-grow: 1; 
-            padding: 2rem; 
-            overflow-y: auto; 
-            display: flex; 
-            justify-content: center; 
+        .proposal-wrapper {
+            width: 100%;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 2rem;
             background-color: #e9ecef;
+            position: relative;
         }
-
-        /* Proposal Paper */
         .proposal-container {
-            background: white;
             width: 8.5in;
             min-height: 11in;
-            padding: 3rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            margin: 0 auto;
-            color: #1f2937;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             transform-origin: top left;
-            /* Gradient Background from original */
+            background-color: #ffffff;
             background-image:
                 radial-gradient(circle at top right, rgba(0, 76, 108, 0.03), transparent 40%),
                 radial-gradient(circle at bottom left, rgba(234, 171, 0, 0.03), transparent 50%);
+            position: absolute;
+            cursor: grab;
+        }
+        .proposal-container.grabbing {
+            cursor: grabbing;
+            user-select: none;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+        /* Accordion styling */
+        summary { cursor: pointer; list-style: none; }
+        summary::-webkit-details-marker { display: none; }
+        summary .accordion-icon { transition: transform 0.3s ease; }
+        details[open] > summary .accordion-icon { transform: rotate(180deg); }
+
+        /* Sidebar and Main Content Transitions */
+        #controls-sidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+        #main-content {
+            transition: margin-left 0.3s ease-in-out;
         }
 
-        /* Proposal Typography */
-        .proposal-container h1 { font-size: 2.5rem; line-height: 1; color: #eaab00; margin-bottom: 0.5rem; }
-        .proposal-container h2 { font-size: 1.25rem; color: #004c6c; font-weight: 700; margin: 0; }
-        .proposal-container h3 { 
-            font-size: 1rem; 
-            font-weight: 700; 
-            color: #004c6c; 
-            border-bottom: 2px solid #eaab00; 
-            padding-bottom: 0.25rem; 
-            margin-bottom: 0.5rem; 
-            margin-top: 1.5rem;
+        /* Compact line spacing for benefits */
+        .benefit-item {
+            padding-top: 0.25rem;
+            padding-bottom: 0.25rem;
         }
 
-        /* Form Elements */
-        input, select { 
-            width: 100%; 
-            padding: 0.5rem 0.75rem; 
-            margin-bottom: 0.5rem; 
-            border: 1px solid #d1d5db; 
-            border-radius: 0.375rem; 
-            font-size: 0.875rem;
-            box-sizing: border-box; 
-            background-color: #fff;
-        }
-        input:focus, select:focus { border-color: #004c6c; outline: 2px solid #004c6c33; }
-        
-        /* Buttons */
-        button#updateProposalBtn { background-color: #004c6c; color: white; width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-        button#generateImageBtn { background-color: #00b4bd; color: white; width: 100%; padding: 0.5rem; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
-        button:hover { opacity: 0.9; }
-
-        /* Utilities & Helpers */
-        .hidden { display: none !important; }
-        .text-sm { font-size: 0.875rem; }
-        .text-xs { font-size: 0.75rem; }
-        .font-bold { font-weight: 700; }
-        .text-center { text-align: center; }
-        .grid { display: grid; gap: 1rem; }
-        .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-        .border-b { border-bottom: 1px solid #e5e7eb; }
-        .py-1 { padding-top: 0.25rem; padding-bottom: 0.25rem; }
-        .flex { display: flex; }
-        .justify-between { justify-content: space-between; }
-        .items-center { align-items: center; }
-        .space-x-3 > * + * { margin-left: 0.75rem; }
-        
-        /* Comparison Grid Override */
-        .grid-cols-10 { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); }
-        .col-span-4 { grid-column: span 4 / span 4; }
-        .col-span-2 { grid-column: span 2 / span 2; }
-        .gap-x-2 { column-gap: 0.5rem; }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            body { height: auto; overflow-y: auto; }
-            .flex-grow { flex-direction: column; overflow: visible; }
-            aside { width: 100%; border-right: none; border-bottom: 1px solid #e5e7eb; }
-            main { padding: 1rem; display: block; }
-            .proposal-container { width: 100% !important; transform: none !important; padding: 1.5rem; }
-            #zoom-controls { display: none; }
+        /* Responsive Proposal View */
+        @media (max-width: 1023px) {
+            .proposal-wrapper {
+                align-items: flex-start;
+                padding: 1rem;
+                overflow-y: auto;
+                padding-bottom: 50vh;
+            }
+            .proposal-container {
+                position: relative !important;
+                width: 100% !important;
+                min-height: auto;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                transform: none !important;
+                left: auto !important;
+                top: auto !important;
+                cursor: default !important;
+                padding: 1.5rem 1rem;
+                font-size: 14px; 
+            }
+            .proposal-container.grabbing {
+                 cursor: default !important;
+            }
+            #zoom-controls {
+                display: none;
+            }
+            #proposal header {
+                margin-bottom: 1.5rem; 
+                padding-bottom: 0.75rem;
+                flex-direction: column;
+            }
+            #proposal header > div:first-child {
+                margin-bottom: 1rem;
+            }
+            #proposal header > div:last-child {
+                text-align: left;
+                width: 100%;
+            }
+             #proposal h1 { font-size: 2.25rem !important; }
+             #proposal h2 { font-size: 1.3rem !important; }
+             #proposal h3 { font-size: 1.15rem !important; margin-bottom: 0.5rem; }
+             #proposal section { margin-bottom: 1.5rem; }
+             #proposal .text-sm { font-size: 0.9rem !important; }
+             #proposal .text-xs { font-size: 0.8rem !important; }
+             #proposal .grid { gap: 1rem !important; }
         }
     </style>
 </head>
@@ -169,14 +113,14 @@
 
     <!-- Header -->
     <header class="bg-white shadow-md p-4 z-30 flex-shrink-0">
-        <div class="max-w-7xl mx-auto flex justify-between items-center w-full">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-3">
                  <!-- Universal Menu Toggle -->
-                <button id="menu-toggle" class="text-gray-600 hover:text-[#004c6c] lg:hidden">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                <button id="menu-toggle" class="text-gray-600 hover:text-[#004c6c]">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                 </button>
                 <div class="flex items-center space-x-3">
-                    <svg class="w-8 h-8 text-[#eaab00]" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
+                    <svg class="w-8 h-8 text-[#eaab00]" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/></svg>
                     <h1 class="text-xl font-bold text-[#004c6c]">Quick Proposal Tool</h1>
                 </div>
             </div>
@@ -188,12 +132,12 @@
         <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-30 hidden"></div>
         
         <!-- Controls Panel (Sidebar) -->
-        <aside id="controls-sidebar" class="w-80 lg:w-96 bg-white p-4 shadow-lg flex-shrink-0 z-40 h-full overflow-y-auto absolute lg:relative transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <aside id="controls-sidebar" class="w-80 lg:w-96 bg-white p-4 shadow-lg flex-shrink-0 z-40 h-full overflow-y-auto absolute transform -translate-x-full">
             <div id="sidebar-content" class="space-y-4">
                  <details class="bg-slate-50 p-3 rounded-lg border border-slate-200" open>
                     <summary class="text-base font-semibold text-[#004c6c] flex justify-between items-center">
                         <span>Advisor & Client Details</span>
-                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </summary>
                     <div class="mt-4 space-y-3">
                         <div>
@@ -226,7 +170,7 @@
                 <details id="plan-details-section" class="bg-slate-50 p-3 rounded-lg border border-slate-200" open>
                     <summary class="text-base font-semibold text-[#004c6c] flex justify-between items-center">
                         <span>Plan Details</span>
-                         <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                         <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </summary>
                     <div class="mt-4 space-y-3">
                         <select id="planSelector" class="w-full p-1.5 text-sm border border-gray-300 rounded-md"></select>
@@ -297,7 +241,7 @@
                  <details id="actions-section" class="bg-slate-50 p-3 rounded-lg border border-slate-200" open>
                     <summary class="text-base font-semibold text-[#004c6c] flex justify-between items-center">
                         <span>Actions</span>
-                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        <svg class="w-5 h-5 accordion-icon text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </summary>
                     <div class="mt-4 space-y-3">
                         <div class="grid grid-cols-2 gap-3">
@@ -315,10 +259,10 @@
         <!-- Proposal Preview (Main Content) -->
         <main id="main-content" class="flex-grow relative h-full">
             <div class="proposal-wrapper h-full">
-                <div id="proposal" class="proposal-container text-gray-800 relative leading-normal">
-                     <header class="flex flex-col sm:flex-row justify-between items-start mb-8 pb-4 border-b-4 border-[#004c6c] bg-transparent shadow-none p-0">
+                <div id="proposal" class="proposal-container p-8 md:p-12 text-gray-800 relative leading-normal">
+                     <header class="flex flex-col sm:flex-row justify-between items-start mb-8 pb-4 border-b-4 border-[#004c6c]">
                         <div class="mb-4 sm:mb-0">
-                            <h1 class="text-4xl lg:text-5xl font-bold text-[#eaab00] mb-2" style="font-size: 2.5rem;">Sample Proposal</h1>
+                            <h1 class="text-4xl lg:text-5xl font-bold text-[#eaab00]">Sample Proposal</h1>
                             <p class="text-md text-gray-600 mt-1">Let's create your BRIGHT PLAN today!</p>
                         </div>
                         <div class="text-left sm:text-right text-xs text-gray-700 leading-snug w-full sm:w-auto">
@@ -518,9 +462,6 @@ function toggleProgramLock(isLocked) {
             return payouts;
         }
 
-        // ------------------------------------------------------------------
-        // PASTE YOUR PRODUCTS DATA BELOW THIS LINE 
-        // ------------------------------------------------------------------
         const products = {
             "Sun Maxilink Prime": {
                 planName: "Sun Maxilink Prime",
@@ -12899,6 +12840,7 @@ function toggleProgramLock(isLocked) {
             { name: "Jocelyn Rodavia", mobile: "0976 573 3926", email: "jocelyn.y.rodavia@sunlife.com.ph", code: "152441" },
             { name: "Mark Albert G. Raqueño", mobile: "0953 830 1168", email: "markalbert.g.raqueno@sunlife.com.ph", code: "147623" },
             { name: "Derick Allosada", mobile: "09544556162", email: "derick.romeos@gmail.com", code: "165199" },
+            { name: "Myrasol C. Ybañez ", mobile: "09352903917", email: "ybanezmyrasol07@gmail.com", code: "162339" },
             { name: "Rhadge Christine B. Valdez", mobile: "09673584569", email: "rhadgechristine.b.valdez@sunlife.com.ph", code: "162338" },
             { name: "Jhe-ann Bilugan ", mobile: "0965 653 9782", email: "jheann.s.bilugan@sunlife.com.ph", code: "141115" },
             { name: "Editha Bocalan", mobile: "0908 319 5022", email: "editha.p.bocalan@sunlife.com.ph", code: "166414" },
@@ -12907,6 +12849,7 @@ function toggleProgramLock(isLocked) {
             { name: "Mary Grace Mesina", mobile: "0961 996 0565", email: "marygrace.v.mesina@sunlife.com.ph", code: "09619960565" },
             { name: "Daryl Saavedra", mobile: "0962 827 9312", email: "daryl.g.saavedra@sunlife.com.ph", code: "150149" },
             { name: "Sherrly Jamet", mobile: "0949 149 9550", email: "sherrly.b.jamet@sunlife.com.ph", code: "160863" },
+            { name: "Rhadge Christine Valdez", mobile: "0967 358 4569", email: "rhadgechristine.b.valdez@sunlife.com.ph", code: "162338" },
             { name: "Maria Cecilia Nazareno ", mobile: "0920 696 9855", email: "mariacecilia.j.nazareno@sunlife.com.ph", code: "162643" },
             { name: "Philip Earl Dela Cruz", mobile: "0976 045 8255", email: "philipearl.a.delacruz@sunlife.com.ph", code: "159740" },
             { name: "Diana May David", mobile: "0945 446 5675", email: "dianamay.s.david@sunlife.com.ph", code: "165117" },
@@ -13061,7 +13004,6 @@ function toggleProgramLock(isLocked) {
             if (planName.includes("Sun Life EasyLink Protect 10")) return 200000;
             return Infinity;
         }
-        // ------------------------------------------------------------------
 
         // Calculation for Sun Maxilink Prime (10-pay)
         function calculateVULFundValue(annualPremium, years) {
