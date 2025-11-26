@@ -193,6 +193,13 @@
                                 Manual Override
                             </label>
                         </div>
+
+                        <div class="p-2 bg-white rounded-md border mt-2">
+                            <label class="flex items-center cursor-pointer text-sm font-medium justify-between">
+                                <span>Use Alternative Name</span>
+                                <input type="checkbox" id="altNameToggle" class="h-4 w-4 text-[#004c6c] focus:ring-[#00b4bd]">
+                            </label>
+                        </div>
                         
                         <!-- NEW FEATURE: Custom Projection Age for EasyLink -->
                         <div id="custom-projection-age-container" class="hidden space-y-2 mt-2 p-2 bg-white rounded-md border">
@@ -465,6 +472,7 @@ function toggleProgramLock(isLocked) {
         const products = {
             "Sun Maxilink Prime": {
                 planName: "Sun Maxilink Prime",
+                altName: "10-Pay VUL Plan",
                 type: 'VUL',
                 payment: "Pay for 10yrs, coverage until 88YO",
                 description: "An insurance plan that combines financial security and investment growth potential with flexible payments, helping you achieve long-term goals.",
@@ -2346,6 +2354,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Life EasyLink Protect 5": {
                 planName: "Sun Life EasyLink Protect 5",
+                altName: "5-Pay Lifetime Protection (VUL)",
                 type: 'VUL',
                 inputType: 'premium',
                 payment: "Pay for 5 years, coverage until 100YO",
@@ -2392,6 +2401,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Life EasyLink Protect 10": {
                 planName: "Sun Life EasyLink Protect 10",
+                altName: "10-Pay Lifetime Protection (VUL)",
                 type: 'VUL',
                 inputType: 'premium',
                 payment: "Pay for 10 years, coverage until 100YO",
@@ -2438,6 +2448,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Fit & Well Advantage 10": {
                 planName: "Sun Fit & Well Advantage 10",
+                altName: "10-Pay Comprehensive Health Insurance",
                 type: 'Trad',
                 payment: "Pay for 10 years, coverage until age 100",
                 description: "A 10-Pay life and health insurance plan that offers critical illness and life insurance benefits until age 100, with bonus disease prevention programs.",
@@ -4542,6 +4553,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Fit & Well Advantage 15": {
                 planName: "Sun Fit & Well Advantage 15",
+                altName: "15-Pay Comprehensive Health Insurance",
                 type: 'Trad',
                 payment: "Pay for 15 years, coverage until age 100",
                 description: "A 15-Pay life and health insurance plan that offers critical illness and life insurance benefits until age 100, with bonus disease prevention programs.",
@@ -6314,6 +6326,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Fit & Well Advantage 20": {
                 planName: "Sun Fit & Well Advantage 20",
+                altName: "20-Pay Comprehensive Health Insurance",
                 type: 'Trad',
                 payment: "Pay for 20 years, coverage until age 100",
                 description: "A 20-Pay life and health insurance plan that offers critical illness and life insurance benefits until age 100, with bonus disease prevention programs.",
@@ -7832,6 +7845,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Life OFW Health Protect 10": {
                 planName: "Sun Life OFW Health Protect 10",
+                altName: "10-Pay OFW Health Plan",
                 type: 'Trad',
                 payment: "Pay for 10 years, coverage until age 100",
                 description: "A 10-Pay life and health insurance plan for OFWs that offers critical illness and life insurance benefits until age 100, with special health and wellness benefits.",
@@ -8352,6 +8366,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Life OFW Health Protect 15": {
                 planName: "Sun Life OFW Health Protect 15",
+                altName: "15-Pay OFW Health Plan",
                 type: 'Trad',
                 payment: "Pay for 15 years, coverage until age 100",
                 description: "A 15-Pay life and health insurance plan for OFWs that offers critical illness and life insurance benefits until age 100, with special health and wellness benefits.",
@@ -8861,6 +8876,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Life OFW Health Protect 20": {
                 planName: "Sun Life OFW Health Protect 20",
+                altName: "20-Pay OFW Health Plan",
                 type: 'Trad',
                 payment: "Pay for 20 years, coverage until age 100",
                 description: "A 20-Pay life and health insurance plan for OFWs that offers critical illness and life insurance benefits until age 100, with special health and wellness benefits.",
@@ -9321,6 +9337,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Life Secure Income 3": {
                 planName: "Sun Life Secure Income 3",
+                altName: "3-Pay Guaranteed Endowment Plan",
                 type: 'Trad',
                 payment: "Pay for 3 years, coverage until age 100",
                 description: "An insurance and savings plan that provides guaranteed lifetime cash benefits and life insurance protection until age 100",
@@ -10050,6 +10067,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Life Secure Income 5": {
                 planName: "Sun Life Secure Income 5",
+                altName: "5-Pay Guaranteed Endowment Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, coverage until age 100",
                 description: "An insurance and savings plan that provides guaranteed lifetime cash benefits and life insurance protection until age 100.",
@@ -10776,6 +10794,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Life Secure Income 10": {
                 planName: "Sun Life Secure Income 10",
+                altName: "10-Pay Guaranteed Endowment Plan",
                 type: 'Trad',
                 payment: "Pay for 10 years, coverage until age 100",
                 description: "An insurance and savings plan that provides guaranteed lifetime cash benefits and life insurance protection until age 100.",
@@ -11502,6 +11521,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Life Secure Income 15": {
                 planName: "Sun Life Secure Income 15",
+                altName: "15-Pay Guaranteed Endowment Plan",
                 type: 'Trad',
                 payment: "Pay for 15 years, coverage until age 100",
                 description: "An insurance and savings plan that provides guaranteed lifetime cash benefits and life insurance protection until age 100.",
@@ -12231,6 +12251,7 @@ function toggleProgramLock(isLocked) {
 
         "Sun LifeAssure": {
                 planName: "Sun LifeAssure",
+                altName: "5-Year Renewable Critical Illness Plan",
                 type: 'Trad',
                 payment: "Renewable Term Insurance every 5 years",
                 description: "A life and health insurance plan that provides protection against critical illnesses. It is a 5-year renewable term that pays the face amount when the insured dies or is diagnosed with a critical illness.",
@@ -12512,6 +12533,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Life Save and Protect 5": {
                 planName: "Sun Life Save and Protect 5",
+                altName: "5-Pay Insurance with Money-back",
                 type: 'Trad',
                 inputType: 'premium', // New property to indicate premium input
                 payment: "Pay for 5 years, coverage for 20 years",
@@ -12530,6 +12552,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Life Save and Protect 10": {
                 planName: "Sun Life Save and Protect 10",
+                altName: "10-Pay Insurance with Money-back",
                 type: 'Trad',
                 inputType: 'premium',
                 payment: "Pay for 10 years, coverage for 20 years",
@@ -12566,6 +12589,7 @@ function toggleProgramLock(isLocked) {
             },        
             "Sun MaxiLink Bright": {
                 planName: "Sun MaxiLink Bright",
+                altName: "5-Pay VUL Plan",
                 type: 'VUL',
                 payment: "Pay for at least 5 years",
                 description: "An investment-linked life insurance plan that provides financial protection while helping you grow your money for your life goals.",
@@ -12590,6 +12614,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun MaxiLink 100": {
                 planName: "Sun MaxiLink 100",
+                altName: "Regular Pay VUL Plan",
                 type: 'VUL',
                 payment: "Pay regularly until age 100",
                 description: "An investment-linked life insurance product that provides lifetime insurance coverage, with investment benefits for wealth accumulation.",
@@ -12615,6 +12640,7 @@ function toggleProgramLock(isLocked) {
             
             "Sun Smarter Life Classic (5-Pay)": {
                 planName: "Sun Smarter Life Classic (5-Pay)",
+                altName: "5-Pay Whole Life Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, coverage until age 100",
                 description: "A traditional whole life insurance plan that provides double life insurance coverage and living benefits with a short payment period of 5 years.",
@@ -12633,6 +12659,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Smarter Life Classic (10-Pay)": {
                 planName: "Sun Smarter Life Classic (10-Pay)",
+                altName: "10-Pay Whole Life Plan",
                 type: 'Trad',
                 payment: "Pay for 10 years, coverage until age 100",
                 description: "A traditional whole life insurance plan that provides double life insurance coverage and living benefits with a limited payment period of 10 years.",
@@ -12651,6 +12678,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Smarter Life Classic (Regular Pay)": {
                 planName: "Sun Smarter Life Classic (Regular Pay)",
+                 altName: "Regular Pay Whole Life Plan",
                 type: 'Trad',
                 payment: "Pay regularly until age 100",
                 description: "A traditional whole life insurance plan that provides double life insurance coverage and living benefits with regular premium payments.",
@@ -12669,6 +12697,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Dream Achiever (5-Pay to 12)": {       
                 planName: "Sun Dream Achiever (5-Pay to 12)",
+                altName: "5-Pay12 Educ Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, payouts at age 12",
                 description: "An endowment plan that provides cash benefits for education, with a short 5-year payment period.",
@@ -12688,6 +12717,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Dream Achiever (5-Pay to 13)": {
                 planName: "Sun Dream Achiever (5-Pay to 13)",
+                altName: "5-Pay13 Educ Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, payouts at age 13",
                 description: "An endowment plan that provides cash benefits for education, with a short 5-year payment period.",
@@ -12707,6 +12737,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Dream Achiever (5-Pay to 14)": {
                 planName: "Sun Dream Achiever (5-Pay to 14)",
+                altName: "5-Pay14 Educ Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, payouts at age 14",
                 description: "An endowment plan that provides cash benefits for education, with a short 5-year payment period.",
@@ -12726,6 +12757,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Dream Achiever (5-Pay to 15)": {
                 planName: "Sun Dream Achiever (5-Pay to 15)",
+                altName: "5-Pay15 Educ Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, payouts at age 15",
                 description: "An endowment plan that provides cash benefits for education, with a short 5-year payment period.",
@@ -12745,6 +12777,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Dream Achiever (5-Pay to 16)": {
                 planName: "Sun Dream Achiever (5-Pay to 16)",
+                altName: "5-Pay16 Educ Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, payouts at age 16",
                 description: "An endowment plan that provides cash benefits for education, with a short 5-year payment period.",
@@ -12764,6 +12797,7 @@ function toggleProgramLock(isLocked) {
             },
              "Sun Dream Achiever (5-Pay to 17)": {
                 planName: "Sun Dream Achiever (5-Pay to 17)",
+                altName: "5-Pay17 Educ Plan",
                 type: 'Trad',
                 payment: "Pay for 5 years, payouts at age 17",
                 description: "An endowment plan that provides cash benefits for education, with a short 5-year payment period.",
@@ -12783,6 +12817,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun Safer Life": {
                 planName: "Sun Safer Life",
+                altName: "5-Pay Renewable Term Plan",
                 type: 'Trad',
                 payment: "5-Year Renewable & Convertible Term",
                 description: "A 5-year renewable and convertible term plan that provides maximum protection at a minimal cost.",
@@ -12801,6 +12836,7 @@ function toggleProgramLock(isLocked) {
             },
             "Sun StartUp": {
                 planName: "Sun StartUp",
+                altName: "10-Pay Term Life Insurance",
                 type: 'Trad',
                 payment: "Pay for 10 years, coverage for 10 years",
                 description: "An affordable life insurance plan that protects you for 10 years and gives back 50% of your premiums paid if you outlive the period.",
@@ -12887,6 +12923,7 @@ function toggleProgramLock(isLocked) {
             clientSmoker: document.getElementById('clientSmoker'),
             planSelector: document.getElementById('planSelector'),
             manualModeCheckbox: document.getElementById('manualModeCheckbox'),
+            altNameToggle: document.getElementById('altNameToggle'),
             standardInputsContainer: document.getElementById('standardInputsContainer'),
             manualInputsContainer: document.getElementById('manualInputsContainer'),
             faceAmountContainer: document.getElementById('faceAmountContainer'),
@@ -13393,8 +13430,17 @@ function toggleProgramLock(isLocked) {
             dom.prop.insuredAge.textContent = client.age;
             dom.prop.insuredGender.textContent = client.gender;
             dom.prop.insuredSmoker.textContent = client.Smoker;
-            dom.prop.planName.textContent = dom.planSelector.value;
-            dom.prop.planPayment.textContent = planData.payment;
+// --- SIMULA NG PAGBABAGO ---
+    // Check natin kung naka-on ang switch
+    const useAltName = dom.altNameToggle.checked;
+    
+    // Kung naka-on (useAltName is true) AT may altName yung product, gamitin yun.
+    // Kung hindi, gamitin ang original name (planData.planName)
+    if (useAltName && planData.altName) {
+        dom.prop.planName.textContent = planData.altName;
+    } else {
+        dom.prop.planName.textContent = planData.planName;
+    }            dom.prop.planPayment.textContent = planData.payment;
             dom.prop.planDescription.textContent = planData.description;
             dom.prop.planPurpose.textContent = planData.purpose;
 
@@ -13824,6 +13870,7 @@ function toggleProgramLock(isLocked) {
             dom.generateImageBtn.addEventListener('click', generateImage);
             document.querySelectorAll('input[name="viewMode"]').forEach(el => el.addEventListener('change', handleViewModeChange));
             dom.faceAmountSelector.addEventListener('change', updateProposal);
+            dom.altNameToggle.addEventListener('change', updateProposal);
             dom.manualModeCheckbox.addEventListener('change', (e) => {
                 toggleManualInputUI(e.target.checked);
             });
