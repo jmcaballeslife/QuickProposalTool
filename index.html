@@ -409,7 +409,7 @@ function toggleProgramLock(isLocked) {
 =================================================================================================
 */
 
-        const VUL_RETURN_RATE = 0.08;
+        const VUL_RETURN_RATE = 0.10;
 
         const riderDefinitions = {
             "TDB": { name: "Total Disability Benefit (TDB)", description: "Waiver of Premium upon Permanent Disability" },
@@ -13104,7 +13104,7 @@ function toggleProgramLock(isLocked) {
             
             let fundValue = 0;
             let fundHistory = [0]; // Store year-end values. Start with 0 for year 0.
-            const growthRate = 1.08; // 8%
+            const growthRate = 1.10; // 10%
 
             for (let yr = 1; yr <= policyYear; yr++) {
                 let premiumPaid = 0;
